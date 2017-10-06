@@ -1,13 +1,23 @@
 #include <iostream>
 #include <cmath>
 #include "XLong.h"
+#include <iomanip>
 int counter = 0;
 unsigned int XLong::multType = 0;
+int getIntLength(int a) {
+	int digits = 0;
+	while (a) {
+		a /= 10;
+		digits++;
+	}
+	digits--;
+	return digits;
+}
 bool isOk(){
 	return true;
 }
 XLong::XLong(){
-	l = 10;
+	l = 0;
 	//p = new long long[l];
 	//for (int i = 0; i < l; i++)
 		//*(p + i) = 1;
@@ -50,9 +60,10 @@ int XLong::max(int a, int b) {
 }
 
 void XLong::print() {
-	std::cout << "Length: " << l << std::endl;
+	int digits = getIntLength(XLong::base);
+	std::cout << "Length: " << digits << std::endl;
 	for (XNumber::const_iterator i = p.begin(); i != p.end(); ++i)
-		std::cout << *i << ' ';
+		std::cout << std::setfill('0') << std::setw(digits) << *i << ' ';
 	std::cout << std::endl;
 }
 
@@ -93,7 +104,8 @@ XNumber XLong::substract(XNumber& n1, XNumber& n2) {
 	/*std::cout << "Test\n";
 	XLong::show(n1);
 	XLong::show(n2);
-	std::cout << "End of init\n";*/
+	std::cout << "End of init\n";
+	//*/
 	XNumber c;
 	long long m = 0;
 
@@ -101,12 +113,12 @@ XNumber XLong::substract(XNumber& n1, XNumber& n2) {
 	for (; it1 != n1.rend() && it2 != n2.rend(); ++it1, ++it2) {
 		c.insert(c.begin(), 0);
 		c[0] += (m + XLong::base + *it1 - *it2) % XLong::base;
-		m = (m + XLong::base + *it1 - *it2 >= 10) ? 0 : -1;
+		m = (m + XLong::base + *it1 - *it2 >= XLong::base) ? 0 : -1;
 	}
 
 	for (; it1 != n1.rend(); ++it1) {
 		c.insert(c.begin(), (*it1 + XLong::base + m) % XLong::base);
-		m = (*it1 + m + XLong::base) >= 10 ? 0 : -1;
+		m = (*it1 + m + XLong::base) >= XLong::base ? 0 : -1;
 	}
 	
 	for (XNumber::const_iterator i = c.begin(); i != c.end()-1;) {
@@ -115,6 +127,11 @@ XNumber XLong::substract(XNumber& n1, XNumber& n2) {
 		else
 			break;
 	}
+
+	/*std::cout << "Result: ";
+	XLong::show(c);
+	std::cout << "End of result\n";
+	//*/
 	return c;
 }
 
@@ -231,8 +248,8 @@ XNumber KaratsubaMult::XMult(XNumber& a, XNumber& b) {
 	a1b1 = XLong::trim0(a1b1);
 	sum = XLong::trim0(sum);
 	
-	/*
-	std::cout << "--------------------------------<\n00:\n";
+	
+	/*std::cout << "--------------------------------<\n00:\n";
 	XLong::show(a0b0);
 
 	std::cout << "11:\n";

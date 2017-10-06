@@ -38,7 +38,7 @@ public:
 
 	friend XNumber operator * (XNumber&, int);
 	
-	static const long long base = 10;
+	static const long long base = 1000000;
 	static unsigned int multType;
 };
 
