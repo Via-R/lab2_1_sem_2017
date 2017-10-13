@@ -2,6 +2,23 @@
 #include <vector>
 typedef std::vector<long long> XNumber;
 bool isOk();
+
+
+class Multiplier {
+public:
+	virtual XNumber XMult(XNumber&, XNumber&) = 0;
+};
+
+class KaratsubaMult : public Multiplier {
+public:
+	XNumber XMult(XNumber&, XNumber&);
+};
+
+class SimpleMult : public Multiplier {
+public:
+	XNumber XMult(XNumber&, XNumber&);
+};
+
 class XLong {
 
 private:
@@ -10,6 +27,7 @@ private:
 	
 	static int max(int, int);
 
+	static Multiplier * currType;
 	//int from1, to1, from2, to2;
 public:
 	XLong();
@@ -24,6 +42,14 @@ public:
 	static XNumber concat0(XNumber&, int);
 	static XNumber preconcat0(XNumber&, int);
 	static XNumber trim0(XNumber&);
+
+
+	static XNumber multByInt(XNumber&, int b);
+	static XNumber toBinary(XNumber&);
+	static XNumber div2(XNumber&);
+
+
+
 	static void show(XNumber&);
 
 	unsigned int getLength();
@@ -36,18 +62,10 @@ public:
 
 	friend XLong operator * (XLong&, XLong&);
 
-	friend XNumber operator * (XNumber&, int);
+	friend XNumber operator >> (XNumber&, int);
 	
-	static const long long base = 1000000;
-	static unsigned int multType;
+	static const long long base = 10;
+
+	static void setMultType(int);
 };
 
-class Multiplier {
-public:
-	virtual XNumber XMult(XNumber&, XNumber&) = 0;
-};
-
-class KaratsubaMult: public Multiplier {
-public:
-	static XNumber XMult(XNumber&, XNumber&);
-};

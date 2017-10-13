@@ -3,7 +3,9 @@
 #include "XLong.h"
 #include <iomanip>
 int counter = 0;
-unsigned int XLong::multType = 0;
+
+Multiplier * XLong::currType = new SimpleMult();
+
 int getIntLength(int a) {
 	int digits = 0;
 	while (a) {
@@ -18,33 +20,26 @@ bool isOk(){
 }
 XLong::XLong(){
 	l = 0;
-	//p = new long long[l];
-	//for (int i = 0; i < l; i++)
-		//*(p + i) = 1;
 }
 XLong::XLong(int a) {
 	l = a;
 }
 XLong::XLong(std::string n) {
-	
 	l = n.length();
 	char * cnum = new char[l];
 	strcpy(cnum, n.c_str());
-	//std::cout << "BASE " << base << std::endl;
 	long long tempSum = 0;
 	int i = l-1, j = 0;
 	while (i >= 0) {
-		//std::cout << "Block skipped\n";
 		int k = 0;
 		
-		while ((i >= 0 && tempSum + (*(cnum + i) - 48)*pow(10, k) < base) && *(cnum + i) - 48 > 0) {
-			//std::cout << "! " << i << std::endl;
-			//std::cout << (*(cnum + i) - 48)*pow(base,k) << std::endl;
-			tempSum += (*(cnum + i) - 48)*pow(10, k);
+		int countBase = 10;
+
+		while ((i >= 0 && tempSum + (*(cnum + i) - 48)*pow(countBase, k) < base) && *(cnum + i) - 48 > 0) {
+			tempSum += (*(cnum + i) - 48)*pow(countBase, k);
 			++k;
 			--i;
 		}
-		
 		
 		p.insert(p.begin(), tempSum);
 		
@@ -61,17 +56,17 @@ int XLong::max(int a, int b) {
 
 void XLong::print() {
 	int digits = getIntLength(XLong::base);
-	std::cout << "Length: " << digits << std::endl;
+	std::cout << std::endl;
 	for (XNumber::const_iterator i = p.begin(); i != p.end(); ++i)
-		std::cout << std::setfill('0') << std::setw(digits) << *i << ' ';
+		std::cout << std::setfill('0') << std::setw(digits) << *i << "";
 	std::cout << std::endl;
 }
 
 XNumber XLong::add(XNumber& n1, XNumber& n2) {
-	
 	XNumber c;
 	long long m = 0;
-
+	//std::cout << "Look: \n";
+	//XLong::show(n2);
 	XNumber::reverse_iterator it1 = n1.rbegin(), it2 = n2.rbegin();
 	for (; it1 != n1.rend() && it2 != n2.rend(); ++it1, ++it2) {
 		c.insert(c.begin(), m);
@@ -90,12 +85,15 @@ XNumber XLong::add(XNumber& n1, XNumber& n2) {
 		m = (*it1 + m) / XLong::base;
 	}
 	for (; it2 != n2.rend(); ++it2) {
+		//std::cout << *it2 <<", "<< m << " ";
 		c.insert(c.begin(), (*it2 + m) % XLong::base);
 		m = (*it2 + m) / XLong::base;
 	}
 	if (m > 0) {
 		c.insert(c.begin(), m);
 	}
+	//std::cout << "Look again: \n";
+	//XLong::show(c);
 	return c;
 }
 
@@ -146,11 +144,16 @@ XLong operator - (XLong& a, XLong& b) {
 	c.l = c.p.size();
 	return c;
 }
+//cockroach
 XLong operator * (XLong& a, XLong& b) {
 	XLong c;
 	XNumber result;
-	if(XLong::multType == 0)
-		result = KaratsubaMult::XMult(a.p, b.p);
+	if (a.p.size() == 1 && b.p.size() == 1) {
+		c.p.insert(c.p.begin(), a.p.at(0) * b.p.at(0));
+		return c;
+	}
+	
+	result = XLong::trim0(XLong::currType->XMult(a.p, b.p));
 
 	c.p = result;
 	c.l = result.size();
@@ -195,7 +198,7 @@ XNumber KaratsubaMult::XMult(XNumber& a, XNumber& b) {
 	for (; it2 != b.rend(); ++it2) {
 		b1.insert(b1.begin(), *it2);
 	}
-
+	
 	/*
 	std::cout << "--------------------------------<\na0:\n";
 	XLong::show(a0);
@@ -243,7 +246,6 @@ XNumber KaratsubaMult::XMult(XNumber& a, XNumber& b) {
 	}
 	else
 		sum = KaratsubaMult::XMult(temp1, temp2);
-
 	a0b0 = XLong::trim0(a0b0);
 	a1b1 = XLong::trim0(a1b1);
 	sum = XLong::trim0(sum);
@@ -263,8 +265,9 @@ XNumber KaratsubaMult::XMult(XNumber& a, XNumber& b) {
 
 	std::cout << counter-- << " F ended\n-------------------------------->\n";
 
-	//return XLong::add(XLong::add(a0b0, XLong::concat0(XLong::substract(XLong::substract(sum, a0b0), a1b1), s)), XLong::concat0(a1b1, 2 * s));*/
-	return a0b0 + (sum - a0b0 - a1b1) * s + a1b1 * (s + s);
+	//*/
+
+	return a0b0 + ((sum - a0b0 - a1b1) >> s) + (a1b1 >> (s + s));
 }
 
 XNumber XLong::inv(XNumber& a) {
@@ -300,16 +303,92 @@ XNumber operator - (XNumber&a, XNumber&b) {
 	return XLong::substract(a, b);
 }
 
-XNumber operator * (XNumber&a, int b) {
+XNumber operator >> (XNumber&a, int b) {
 	return XLong::concat0(a, b);
 }
 XNumber XLong::trim0(XNumber& a) {
 	XNumber c = a;
-	for (XNumber::const_iterator i = c.begin(); i != c.end() - 1;) {
-		if (*i == 0)
-			i = c.erase(i);
+	if (c.begin() == c.end())
+		return c;
+	for (XNumber::const_iterator i = c.begin(); i != c.end() - 1; ++i) {
+		if (*i == 0) 
+			c.erase(i);
 		else
 			break;
 	}
 	return c;
+}
+XNumber XLong::multByInt(XNumber& a, int b) {
+	XNumber temp, res;
+	int m = 0, t, locCounter = 0;
+	while (b >= 1) {
+		t = b % 10;
+		b /= 10;
+		temp.clear();
+		m = 0;
+		for (XNumber::reverse_iterator i = a.rbegin(); i != a.rend(); ++i) {
+			temp.insert(temp.begin(), 0);
+			temp[0] = (m + *i*t) % XLong::base;
+			m = (m + *i*t) / XLong::base;
+		}
+		
+		if(m > 0)
+			temp.insert(temp.begin(), m);
+
+		temp = temp >> locCounter;
+	
+		temp = XLong::trim0(temp);
+		
+		if(temp[0] != 0)
+			res = temp + res;
+		
+		++locCounter;
+	}
+	return res;
+}
+XNumber XLong::toBinary(XNumber& a) {
+	XNumber temp = a;
+	XNumber binary;
+	bool exit = false;
+	if (temp.size() == 1 && temp[temp.size() - 1] == 0)
+		binary.insert(binary.begin(), 0);
+	else
+		while (!exit) {
+			if (temp.size() == 1 && temp[temp.size() - 1] == 0)
+				break;
+			binary.insert(binary.begin(), temp[temp.size() - 1] % 2);
+			temp = XLong::div2(temp);
+		}
+	return binary;
+}
+XNumber XLong::div2(XNumber& a) {
+	XNumber res;
+	long long m = 0;
+	for (XNumber::const_iterator i = a.begin(); i != a.end() ; ++i) {
+		long long loc = stol(std::to_string(m) + std::to_string(*i));
+		if (loc >= 2) {
+			if (std::to_string(loc).at(0) < '2' && stol(std::to_string(m)) != 1) {
+				res.insert(res.end(), 0);
+			}
+			res.insert(res.end(), loc / 2);
+			m = loc % 2;
+		}
+		else {
+			res.insert(res.end(), loc / 2);
+			m = loc;
+		}
+	}
+	return XLong::trim0(res);
+}
+
+XNumber SimpleMult::XMult(XNumber& a, XNumber& b) {
+	XNumber temp, res;
+	int t, locCounter = 0;
+	for (XNumber::reverse_iterator j = b.rbegin(); j != b.rend(); ++j) {
+		t = *j;
+		temp = XLong::trim0(XLong::multByInt(a, t));
+		res = res + (temp >> locCounter);
+		++locCounter;
+	}
+	return res;
 }
