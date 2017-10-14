@@ -4,17 +4,8 @@
 #include <iomanip>
 int counter = 0;
 
-Multiplier * XLong::currType = new SimpleMult();
+Multiplier * XLong::currType = new KaratsubaMult();
 
-int getIntLength(int a) {
-	int digits = 0;
-	while (a) {
-		a /= 10;
-		digits++;
-	}
-	digits--;
-	return digits;
-}
 bool isOk(){
 	return true;
 }
@@ -25,6 +16,8 @@ XLong::XLong(int a) {
 	l = a;
 }
 XLong::XLong(std::string n) {
+	int baseLen = XLong::getDigitsNum(base-1);
+
 	l = n.length();
 	char * cnum = new char[l];
 	strcpy(cnum, n.c_str());
@@ -35,7 +28,7 @@ XLong::XLong(std::string n) {
 		
 		int countBase = 10;
 
-		while ((i >= 0 && tempSum + (*(cnum + i) - 48)*pow(countBase, k) < base) && *(cnum + i) - 48 > 0) {
+		while ((i >= 0 && tempSum + (*(cnum + i) - 48)*pow(countBase, k) < base) && k < baseLen) {//*(cnum + i) - 48 > 0
 			tempSum += (*(cnum + i) - 48)*pow(countBase, k);
 			++k;
 			--i;
@@ -43,19 +36,21 @@ XLong::XLong(std::string n) {
 		
 		p.insert(p.begin(), tempSum);
 		
-		if (*(cnum + i) - 48 == 0 && tempSum > 0)
+		/*if (*(cnum + i) - 48 == 0 && tempSum > 0)
 			p.insert(p.begin(), 0);
 		if (*(cnum + i) - 48 == 0)
-			--i;
+			--i;*/
 		tempSum = 0;
 	}
+	std::cout << "Init: ";
+	XLong::show(p);
 }
 int XLong::max(int a, int b) {
 	return a > b ? a : b;
 }
 
 void XLong::print() {
-	int digits = getIntLength(XLong::base);
+	int digits = XLong::getDigitsNum(XLong::base-1);
 	std::cout << std::endl;
 	for (XNumber::const_iterator i = p.begin(); i != p.end(); ++i)
 		std::cout << std::setfill('0') << std::setw(digits) << *i << "";
@@ -290,6 +285,8 @@ XNumber XLong::preconcat0(XNumber&a, int s) {
 	return res;
 };
 void XLong::show(XNumber&q) {
+	/*if (q.begin() == q.end())
+		std::cout << "TOTAL FAILURE IN SHOW\n";*/
 	for (XNumber::const_iterator i = q.begin(); i != q.end(); ++i)
 		std::cout << *i << " ";
 	std::cout << "\n\n";
@@ -308,22 +305,31 @@ XNumber operator >> (XNumber&a, int b) {
 }
 XNumber XLong::trim0(XNumber& a) {
 	XNumber c = a;
-	if (c.begin() == c.end())
+	
+	//std::cout << "BEGIN T\n";
+	//XLong::show(c);
+	//std::cout << "...\n";
+	if (c.begin() == c.end() || c.begin() == c.end()-1)
 		return c;
-	for (XNumber::const_iterator i = c.begin(); i != c.end() - 1; ++i) {
+	for (XNumber::const_iterator i = c.begin(); i != c.end() - 1;) {
 		if (*i == 0) 
-			c.erase(i);
+			i = c.erase(i);
 		else
 			break;
 	}
+	//std::cout << "END T\n";
 	return c;
 }
 XNumber XLong::multByInt(XNumber& a, int b) {
 	XNumber temp, res;
 	int m = 0, t, locCounter = 0;
+	if (b == 0) {
+		res.insert(res.begin(), 0);
+		return res;
+	}
 	while (b >= 1) {
-		t = b % 10;
-		b /= 10;
+		t = b % XLong::base;
+		b /= XLong::base;
 		temp.clear();
 		m = 0;
 		for (XNumber::reverse_iterator i = a.rbegin(); i != a.rend(); ++i) {
@@ -336,10 +342,13 @@ XNumber XLong::multByInt(XNumber& a, int b) {
 			temp.insert(temp.begin(), m);
 
 		temp = temp >> locCounter;
-	
+		
+		
 		temp = XLong::trim0(temp);
 		
-		if(temp[0] != 0)
+			
+
+		if(temp.begin() != temp.end() && temp[0] != 0)
 			res = temp + res;
 		
 		++locCounter;
@@ -383,12 +392,52 @@ XNumber XLong::div2(XNumber& a) {
 
 XNumber SimpleMult::XMult(XNumber& a, XNumber& b) {
 	XNumber temp, res;
-	int t, locCounter = 0;
+	int t, locCounter = 0, toMult = 1;
 	for (XNumber::reverse_iterator j = b.rbegin(); j != b.rend(); ++j) {
+		
 		t = *j;
 		temp = XLong::trim0(XLong::multByInt(a, t));
-		res = res + (temp >> locCounter);
+		//std::cout << "Look: ";
+	//	XLong::show(XLong::multByInt(temp, (locCounter * XLong::base / 10)/10));
+		//std::cout << "Nice\n";
+		for (int t = 0; t < locCounter; t++)
+			temp = XLong::multByInt(temp, XLong::base);
+		//res = res + (temp >> locCounter * XLong::getDigitsNum(XLong::base-1));
+		//XLong::advancedConcat0(temp, locCounter * XLong::getDigitsNum(XLong::base - 1));
+		//std::cout << "To mult: " << toMult << std::endl;
+		res = res + temp;//XLong::multByInt(temp, (locCounter * XLong::base / 10) / 10);
 		++locCounter;
 	}
+	return res;
+}
+
+int XLong::getDigitsNum(int number) {
+	int digits = number < 0 ? 1 : 0;
+	while (number) {
+		number /= 10;
+		digits++;
+	}
+	return digits;
+}
+
+XNumber XLong::advancedConcat0(XNumber& a, int p) {
+	std::cout << "START\n";
+	if (a.begin() == a.end())
+		return a;
+	int locBase = XLong::base;
+	int digits = XLong::getDigitsNum(locBase-1);
+	XNumber res = a;
+	auto i = res.end() - 1;
+	int zeroCount = 0;
+	while (p) {
+		if (*i * 10 < locBase && zeroCount)
+			*i *= 10;
+		else {
+			res.insert(res.end(), 0);
+			i = res.end() - 1;
+		}
+		--p;
+	}
+	std::cout << "END\n";
 	return res;
 }

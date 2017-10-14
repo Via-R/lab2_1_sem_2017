@@ -20,7 +20,6 @@ public:
 };
 
 class XLong {
-
 private:
 	unsigned int l;
 	std::vector<long long> p;
@@ -40,6 +39,7 @@ public:
 	static XNumber substract(XNumber&, XNumber&);
 	static XNumber inv(XNumber&);
 	static XNumber concat0(XNumber&, int);
+	static XNumber advancedConcat0(XNumber&, int);
 	static XNumber preconcat0(XNumber&, int);
 	static XNumber trim0(XNumber&);
 
@@ -48,6 +48,7 @@ public:
 	static XNumber toBinary(XNumber&);
 	static XNumber div2(XNumber&);
 
+	static int getDigitsNum(int);
 
 
 	static void show(XNumber&);
@@ -64,7 +65,7 @@ public:
 
 	friend XNumber operator >> (XNumber&, int);
 	
-	static const long long base = 10;
+	static const long long base = 1000000;
 
 	static void setMultType(int);
 };
