@@ -17,16 +17,15 @@ int main() {
 		XLong a(num1);
 		XLong b(num2);
 		
-		(a + b).print();
-
-		XLong q("909");
-		XLong w("999");
-
-		cout << "This: " << endl;
-		(q+w).print();
-
+		
 		XLong mult = a * b;
+		
+		XLong::setType(new SimpleMult());
+		XLong mult2 = a * b;
+
 		mult.print();
+		mult2.print();
+		(mult - mult2).print();
 	}
 	else cout << "Unable to open file";
 	system("pause");

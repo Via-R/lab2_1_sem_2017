@@ -35,6 +35,8 @@ public:
 	
 	void print();
 	
+	static void setType(Multiplier * );
+
 	static XNumber add(XNumber&, XNumber&);
 	static XNumber substract(XNumber&, XNumber&);
 	static XNumber inv(XNumber&);
@@ -67,6 +69,6 @@ public:
 	
 	static const long long base = 1000000;
 
-	static void setMultType(int);
+	//static void setMultType(int);
 };
 

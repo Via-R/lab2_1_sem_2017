@@ -6,6 +6,10 @@ int counter = 0;
 
 Multiplier * XLong::currType = new KaratsubaMult();
 
+void XLong::setType(Multiplier * a) {
+	currType = a;
+}
+
 bool isOk(){
 	return true;
 }
@@ -28,7 +32,7 @@ XLong::XLong(std::string n) {
 		
 		int countBase = 10;
 
-		while ((i >= 0 && tempSum + (*(cnum + i) - 48)*pow(countBase, k) < base) && k < baseLen) {//*(cnum + i) - 48 > 0
+		while ((i >= 0 && tempSum + (*(cnum + i) - 48)*pow(countBase, k) < base) && k < baseLen) {
 			tempSum += (*(cnum + i) - 48)*pow(countBase, k);
 			++k;
 			--i;
@@ -36,10 +40,6 @@ XLong::XLong(std::string n) {
 		
 		p.insert(p.begin(), tempSum);
 		
-		/*if (*(cnum + i) - 48 == 0 && tempSum > 0)
-			p.insert(p.begin(), 0);
-		if (*(cnum + i) - 48 == 0)
-			--i;*/
 		tempSum = 0;
 	}
 	std::cout << "Init: ";
