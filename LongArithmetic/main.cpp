@@ -29,7 +29,15 @@ int main() {
 
 		string numToTest;
 		getline(myfile, numToTest);
-		LucasLehmer n(numToTest);
+
+		//LucasLehmer n(numToTest);
+		//Lehmann n(numToTest);
+		//RabinMiller n(numToTest);
+		SolovayStrassen n(numToTest);
+		//jacobi(12, 3) = 0, jacobi(28, 21) = 0, jacobi(6, 11) = -1, jacobi(226, 135) = 1, 
+		//jacobi(26, 35) = -1, jacobi(-286, 4272943) = 1, jacobi(888, 1999) = -1
+	//	cout << "KEKUS: " << SolovayStrassen::jSymbol(1, 2197, 383) << endl
+		
 		cout << "We've got this mumber: " << n << endl;
 		if (n.isValid()) {
 			string answer = n.isPrimal() ? "Yes" : "No";

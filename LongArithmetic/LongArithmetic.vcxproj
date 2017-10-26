@@ -142,6 +142,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PrimalTest.cpp" />
+    <ClCompile Include="RandNumbers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LongArithmeticLib\LongArithmeticLib.vcxproj">
