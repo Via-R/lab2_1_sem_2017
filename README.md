@@ -23,7 +23,7 @@ All of those methods are implemented as separate classes with corresponding name
 ## How to test
 In order to test the labwork, you need MS Visual Studio C++ installed, then clone the repository using
 
-`git clone https://github.com/Via-R/lab2_sem1_2017.git` 
+`> git clone https://github.com/Via-R/lab2_sem1_2017.git` 
 
 Then open the .sln file with MS Visual Studio and launch the project. The main script will read two lines from `input.txt` - they contain two numbers to be multiplied. Then the third line is read, it contains the expected answer which will be printed out to compare it to the results the program got. After that, the first two numbers are multiplied using two different methods that were mentioned before, and then their difference is calculated and printed out. 
 After the multiplication is done, one more line is read - it contains a number, which primality should be tested. Then it is passed to each of the implemented methods and they print out their answer - whether the mentioned number is prime or not.
