@@ -3,7 +3,6 @@
 typedef std::vector<long long> XNumber;
 bool isOk();
 
-
 class Multiplier {
 public:
 	virtual XNumber XMult(XNumber&, XNumber&) = 0;

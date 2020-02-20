@@ -13,15 +13,13 @@ long long modPow(long long a, long long p, long long m) {
 };
 
 bool LucasLehmer::isPrimal(){
-	int s = 4;
-	int k = 1;
+	long long s = 4;
 	long long m = pow(2, p) - 1;
-	while (k != p - 1) {
-		s = (s*s - 2) % m;
-		++k;
+	for (int k = 0; k < p - 2; ++k) {
+		s = ((s * s) - 2) % m;
 	}
 	if (s == 0)
-	return true;
+		return true;
 	return false;
 }
 bool LucasLehmer::isValid() {
@@ -55,11 +53,11 @@ bool Lehmann::isPrimal() {
 	if (r == 1)++r;
 	if (r == 0)r=2;
 	long long q = modPow(r, (number - 1) / 2, number);
-	std::cout << "R: " << r << std::endl;
+	//std::cout << "R: " << r << std::endl;
 	//q %= number;
 	if (q == number - 1)
 		q = -1;
-	std::cout << "Q: " << q << std::endl;
+	//std::cout << "Q: " << q << std::endl;
 
 	if (q == 1 || q == -1)
 		return true;

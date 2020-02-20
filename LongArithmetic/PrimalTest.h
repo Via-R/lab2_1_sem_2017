@@ -5,21 +5,25 @@ public:
 	virtual bool isPrimal() = 0;
 	virtual bool isValid() = 0;
 };
+
 class LucasLehmer: public PrimalTest{
 	long long p = 0;
 	long long number;
+
 public:
 	LucasLehmer() :number(0) {};
 	LucasLehmer(long long a) :number(a) {};
-	LucasLehmer(std::string a) :number(stol(a)) {};
+	LucasLehmer(std::string a) :number(stoll(a)) {};
 
 	bool isPrimal();
 	bool isValid();
 
 	friend std::ostream& operator<<(std::ostream& os, const LucasLehmer& ll);
 };
+
 class Lehmann : public PrimalTest {
 	long long number;
+
 public:
 	Lehmann() :number(0) {};
 	Lehmann(long long a) :number(a) {};
@@ -34,6 +38,7 @@ public:
 class RabinMiller : public PrimalTest {
 	long long number;
 	int k = 10;
+
 public:
 	RabinMiller() :number(0) {};
 	RabinMiller(long long a) :number(a) {};

@@ -42,8 +42,8 @@ XLong::XLong(std::string n) {
 		
 		tempSum = 0;
 	}
-	std::cout << "Init: ";
-	XLong::show(p);
+	// std::cout << "Initialized xlong: ";
+	// XLong::show(p);
 }
 int XLong::max(int a, int b) {
 	return a > b ? a : b;
@@ -51,7 +51,7 @@ int XLong::max(int a, int b) {
 
 void XLong::print() {
 	int digits = XLong::getDigitsNum(XLong::base-1);
-	std::cout << std::endl;
+	//std::cout << std::endl;
 	for (XNumber::const_iterator i = p.begin(); i != p.end(); ++i)
 		std::cout << std::setfill('0') << std::setw(digits) << *i << "";
 	std::cout << std::endl;
@@ -421,7 +421,7 @@ int XLong::getDigitsNum(int number) {
 }
 
 XNumber XLong::advancedConcat0(XNumber& a, int p) {
-	std::cout << "START\n";
+	// std::cout << "START\n";
 	if (a.begin() == a.end())
 		return a;
 	int locBase = XLong::base;
@@ -438,6 +438,6 @@ XNumber XLong::advancedConcat0(XNumber& a, int p) {
 		}
 		--p;
 	}
-	std::cout << "END\n";
+	// std::cout << "END\n";
 	return res;
 }
