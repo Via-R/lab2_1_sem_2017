@@ -1,4 +1,7 @@
 # Long arithmetic and primality tests
+
+![Screenshot of the main console menu](screen.png)
+
 This labwork consists of two parts:
 
  - Long arithmetic class - allows to add, subtract and multiply long numbers that are too long to be stored in ordinary variables
